@@ -1,3 +1,6 @@
 [submodule "tfhe"]
 	path = tfhe
 	url = https://github.com/tfhe/tfhe.git
+[submodule "OpenBLAS"]
+	path = OpenBLAS
+	url = https://github.com/xianyi/OpenBLAS.git
