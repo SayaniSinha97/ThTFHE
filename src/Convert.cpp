@@ -100,8 +100,6 @@ int main(){
     while(bound > 1e-3){
 	    result_msg = 0;
 	    //Assuming k = 1, n = N = 1024, and converting lwe ciphertext of each of the result bit into corresponding ring-lwe ciphertext one by one and decrypting
-	    //TODO: Pack all 32 lwe ciphertexts into one tlwe ciphertext and call threshold_decryption once
-	    //NEXT TODO: Do the same but with k > 1
 		for (int i = 0; i < 32; i++){
 			resultOfEvalT = new_TLweSample(tlwe_params);
 			TLweFromLwe(resultOfEvalT, &resultOfEval[i], tlwe_params);

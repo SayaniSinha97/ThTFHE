@@ -14,8 +14,6 @@
 
 #define MSIZE 2
 
-// urgent todo: use OpenMP loop collapse
-
 int main(int argc, char *argv[]){
 	if(argc < 4){
 		std::cout << "Please provide values of t, p and party-ids of collaborating t parties as space separated integers in the command line for t-out-of-p threshold decryption.\n";
@@ -74,14 +72,17 @@ int main(int argc, char *argv[]){
     std::cout << "Direct Decryption result: " << dmsg << std::endl;
 
     /* Threshold Decryption */
+
 	// struct timespec share_start = {0, 0};
 	// struct timespec share_end = {0, 0};
+	// clock_gettime(CLOCK_MONOTONIC, &share_start);	/*measure time in seconds*/
 	unsigned int high, low;
-	// clock_gettime(CLOCK_MONOTONIC, &share_start);
 	__asm__ __volatile__("xorl %%eax,%%eax\n cpuid \n" ::: "%eax", "%ebx", "%ecx", "%edx");
     __asm__ __volatile__ ("rdtsc" : "=a" (low), "=d" (high));
-	auto clock_start_sharing = (static_cast<uint64_t>(high) << 32) | low;
+	auto clock_start_sharing = (static_cast<uint64_t>(high) << 32) | low;	/*measure time in clock cycles*/
+
     shareSecret(t, p, key, params);
+
     __asm__ __volatile__ ("rdtsc" : "=a" (low), "=d" (high));
     auto clock_stop_sharing = (static_cast<uint64_t>(high) << 32) | low;
 	// clock_gettime(CLOCK_MONOTONIC, &share_end);
@@ -136,9 +137,11 @@ int main(int argc, char *argv[]){
 				partial_ciphertexts[i]->coefsT[j] = 0;
 			}
 		}
+		/* Each party performs partial decryption on its own */
 		for(int i = 0; i < t; i++){
 			partialDecrypt(ciphertext, params, partial_ciphertexts[i], cycle_counts_partial, i, subset, t, p, bound);
 		}
+		/* Each party performs final decryption on its own */
 		for(int i = 0; i < t; i++){
 			finalDecrypt(ciphertext, partial_ciphertexts, params, cycle_counts_final, i, subset, t, p);
 		}
