@@ -5,9 +5,6 @@ BLAS_LIB = -lopenblas
 
 all: bin/keygen bin/tlwetn bin/convert
 
-bin/share.o: src/share.cpp
-	g++ -g -c src/share.cpp -o bin/share.o
-
 bin/tlwetn: bin/threshold_decryption_functions.o src/TLwe_TN.cpp
 	${TFHE_OPTIONS} g++ -g -fopenmp src/TLwe_TN.cpp bin/threshold_decryption_functions.o -o bin/tlwetn ${TFHE_LIB} ${BLAS_LIB}
 
