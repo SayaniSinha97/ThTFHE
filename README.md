@@ -26,13 +26,9 @@ Change `LD_LIBRARY_PATH`:
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
 ```
 
-Modify Compute function in src/Compute.cpp to create new circuits.
-Modify test.py accordingly.
-
 bin/keygen generates keys.
-bin/encrypt takes data from test/plain.txt and encrypts it.
-bin/compute computes on the encryptions.
-bin/decrypt performs the decryption.
+bin/tlwetn encrypts an interger first, then does threshold secret sharing and then performs threshold decryption.
+bin/convert takes two integers, encrypts them, performs homomorphic AND, and then threshold decrypt the resulting ciphertext.
 
 If a binary uses OpenMP and/or OpenBLAS, run it as:
 
