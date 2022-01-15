@@ -42,4 +42,4 @@ OMP_NUM_THREADS=<cores> OPENBLAS_NUM_THREADS=<cores> ./<binary> <params>
 
 # Running on Raspberry Pi
 
-Follow the README.md file in rpi.zip
+Follow the README.md file in `rpi` directory.
