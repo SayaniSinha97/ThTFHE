@@ -60,7 +60,7 @@ int main(int argc, char *argv[]){
 	for(int i = 0; i < 32; i++){
 		mu->coefsT[i] += modSwitchToTorus32((msg >> i) & 1, MSIZE);
 	}
-	tLweSymEncrypt(ciphertext, mu, 0.001, key);
+	tLweSymEncrypt(ciphertext, mu, 3e-8, key);
 
     /* Direct Decryption */
     int dmsg = 0;
@@ -96,7 +96,7 @@ int main(int argc, char *argv[]){
     int rbit;
     int result_msg;
     TorusPolynomial* result_plaintext = new_TorusPolynomial(params->N);
-    double bound = 0.5;
+    double bound = 0.05;
     unsigned int lo,hi;
 
  //    while(bound > 1e-3){
@@ -128,7 +128,7 @@ int main(int argc, char *argv[]){
 	// for(int i = 0; i < t; i++){
 	// 	result_plaintexts[i] = new_TorusPolynomial(params->N);
 	// }
-	while(bound > 1e-3){
+	while(bound > 1e-5){
 		std::cout << "Noise: " << bound << std::endl;
 		for(int i = 0; i < t; i++){
 			cycle_counts_partial[i] = 0;

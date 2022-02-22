@@ -77,37 +77,45 @@ int main(){
     LweSample *resultOfEval = new_gate_bootstrapping_ciphertext_array(32, params);
     Evaluate(resultOfEval, ciphertext1, ciphertext2, cloud_key);
 
-    int dmsg = directDecrypt(resultOfEval, key);
+    int dmsg = directDecrypt(resultOfEval, key); //Direct decryption of Torus LWE ciphertext
 
     int32_t resOR = msg1 & msg2;
     std::cout << "\nExpected output: " << resOR << "\n";
     std::cout << "Decrypted value: " << dmsg << "\n";
 
-    TLweParams *tlwe_params = new_TLweParams(1024, 1, 0.01, 0.2);
+    TLweParams *tlwe_params = new_TLweParams(1024, 1, 3e-8, 0.2);
     TLweKey *tlwe_key = new_TLweKey(tlwe_params);
 	tLweKeyGen(tlwe_key);
 
 	TLweSample *resultOfEvalT;
 	TorusPolynomial *result_plaintext;
-
+  TorusPolynomial *direct_result_plaintext;
 	TLweKeyFromLweKey(key->lwe_key, tlwe_key);
-
     shareSecret(3, 5, tlwe_key, tlwe_params);
-
     double bound = 0.0125;
-    int result_msg;
+    int result_msg, direct_result_msg, dbit, tbit;
     std::vector<int> subset{1,2,4};
-    while(bound > 1e-3){
+    while(bound > 1e-5){
 	    result_msg = 0;
+      direct_result_msg = 0;
 	    //Assuming k = 1, n = N = 1024, and converting lwe ciphertext of each of the result bit into corresponding ring-lwe ciphertext one by one and decrypting
 		for (int i = 0; i < 32; i++){
 			resultOfEvalT = new_TLweSample(tlwe_params);
 			TLweFromLwe(resultOfEvalT, &resultOfEval[i], tlwe_params);
-			result_plaintext = new_TorusPolynomial(tlwe_params->N);
+			result_plaintext = new_TorusPolynomial(tlwe_params->N);    //result message polynomial after threshold decryption
+      direct_result_plaintext = new_TorusPolynomial(tlwe_params->N);    //result message polynomial after direct decryption(for comparison)
+      /* Direct decryption of Torus ring-LWE ciphertext*/
+      tLwePhase(direct_result_plaintext, resultOfEvalT, tlwe_key);
+      dbit = (direct_result_plaintext->coefsT[0] > 0) ? 1 : 0;
+      direct_result_msg += dbit << i;
+      /* Threshold decryption of Torus ring-LWE ciphertext*/
 			thresholdDecrypt(result_plaintext, resultOfEvalT, tlwe_params, subset, 3, 5, bound);
-			result_msg += (result_plaintext->coefsT[0] > 0 ? 1 : 0) << i;
+      tbit = result_plaintext->coefsT[0] > 0 ? 1 : 0;
+			result_msg += tbit << i;
 		}
-		std::cout << "bound: " << bound << "   result_msg: " << result_msg << "\n";
+		std::cout << "\nstandard deviation of Gaussian smudging noise: " << bound << "\n";
+    std::cout <<"result after threshold decryption: " << result_msg << "\n";
+   std::cout << "result after direct decryption: " << direct_result_msg << "\n";
 		bound /= 2;
 	}
 }
