@@ -46,6 +46,12 @@ bin/convert takes two integers from test/plain22.txt and test/plain23.txt, encry
 ./bin/convert
 ```
 
+bin/KNN_medical_data uses data from test/bootstrap_modules folder and implements our use-case.
+
+```bash
+./bin/KNN_medical_data
+```
+
 If a binary uses OpenMP and/or OpenBLAS, run it as:
 
 ```bash
