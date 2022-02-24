@@ -40,7 +40,7 @@ bin/tlwetn encrypts an interger first to a Torus ring-LWE ciphertext, then does 
 ```bash
 ./bin/tlwetn 4 7 1 3 4 5
 ```
-bin/convert takes two integers from test/plain22.txt and test/plain23.txt, encrypts them to Torus LWE ciphertexts, performs homomorphic AND, convert the resulting Torus LWE ciphertext into a Torus ring-LWE ciphertext and then perform threshold decryption on this ciphertext.
+bin/convert takes two integers from test/plain22.txt and test/plain23.txt, encrypts them to Torus LWE ciphertexts, performs homomorphic AND, converts the resulting Torus LWE ciphertext into a Torus ring-LWE ciphertext and then performs threshold decryption on this ciphertext.
 
 ```bash
 ./bin/convert
