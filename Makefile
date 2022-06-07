@@ -3,7 +3,12 @@ TFHE_OPTIONS = C_INCLUDE_PATH=$$C_INCLUDE_PATH:${TFHE_PREFIX}/include CPLUS_INCL
 TFHE_LIB = -ltfhe-spqlios-fma
 BLAS_LIB = -lopenblas
 
-all: bin/keygen bin/tlwetn bin/convert bin/KNN_medical_data
+all: bin/keygen bin/tlwetn bin/convert bin/KNN_medical_data bin/libthfhe.a
+
+bin/libthfhe.a: src/libthfhe.cpp src/thfhe.hpp
+	rm -f bin/libthfhe.a
+	${TFHE_OPTIONS} g++ -g -fopenmp -O3 -c src/libthfhe.cpp -o bin/libthfhe.o ${TFHE_LIB} ${BLAS_LIB}
+	ar -crs bin/libthfhe.a bin/libthfhe.o
 
 bin/KNN_medical_data: bin/threshold_decryption_functions.o src/KNN_medical_data.cpp
 	${TFHE_OPTIONS} g++ -g -fopenmp src/KNN_medical_data.cpp bin/threshold_decryption_functions.o -o bin/KNN_medical_data ${TFHE_LIB} ${BLAS_LIB}
