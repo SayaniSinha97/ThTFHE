@@ -1,5 +1,5 @@
 # ThTFHE
-Contains artifacts related to the submission
+Contains our prototype software implementation of Threshold decryption enabled version of TFHE. Theoretical details of our work can be found at https://eprint.iacr.org/2022/1625.pdf.
 
 # Installation
 
