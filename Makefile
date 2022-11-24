@@ -3,7 +3,10 @@ TFHE_OPTIONS = C_INCLUDE_PATH=$$C_INCLUDE_PATH:${TFHE_PREFIX}/include CPLUS_INCL
 TFHE_LIB = -ltfhe-spqlios-fma
 BLAS_LIB = -lopenblas
 
-all: bin/keygen bin/tlwetn bin/convert bin/KNN_medical_data bin/libthfhe.a
+all: bin/keygen bin/tlwetn bin/convert bin/KNN_medical_data bin/libthfhe.a bin/public_sampling_test
+
+bin/public_sampling_test: src/public_sampling_test.cpp
+	${TFHE_OPTIONS} g++ -g src/public_sampling_test.cpp -o bin/public_sampling_test ${TFHE_LIB}
 
 bin/libthfhe.a: src/libthfhe.cpp src/thfhe.hpp
 	rm -f bin/libthfhe.a
@@ -32,5 +35,7 @@ clean:
 	touch test/.gitkeep
 	touch test/plain22.txt
 	touch test/plain23.txt
+	touch test/m0.txt
+	touch test/m1.txt
 	mkdir -p test/secret.key_shards
 	touch test/secret.key_shards/,gitkeep
