@@ -1,4 +1,4 @@
-# SubmissionCodes
+# ThTFHE
 Contains artifacts related to the submission
 
 # Installation
