@@ -284,6 +284,57 @@ void shareSecret(int t, int p, TLweKey *key, TLweParams *params){
 	distributeShares(shares, t, k, p, params);
 }
 
+void shareSecret2(int t, int p, TLweKey *key, TLweParams *params){
+	int k = key->params->k;
+	int N = key->params->N;
+	std::default_random_engine gen;
+    std::uniform_int_distribution<int> dist(0, 1);
+	long long int group_count = ncrT(p,t);
+	// std::cout << group_count << "\n";
+	long long int d = group_count*t*k;
+
+	/* We store only k(t-1) rows of rho matrix at a time during on-the-fly computation of key shares corresponding to one t-sized group*/
+	int **partial_rho = (int**)malloc(k * (t - 1) * sizeof(int*));
+	for(int i = 0; i < k * ( t- 1); i++){
+		partial_rho[i] = (int*)malloc(N * sizeof(int));
+	}
+
+	for(int group_id = 1; group_id <= group_count; group_id++){
+		std::vector<int> parties;
+		findParties(parties, group_id, t, p);
+		for(int i = 0; i < k*(t-1); i++){
+			for(int j = 0; j < N; j++){
+				partial_rho[i][j] = dist(gen);
+			}
+		}
+		for(int i = 0; i < parties.size(); i++){
+			TLweKey *key_share = new_TLweKey(params);
+			if(i == 0){
+				for(int keyi = 0; keyi < k; keyi++){
+					for(int keyj = 0; keyj < N; keyj++){
+						key_share->key[keyi].coefs[keyj] = key->key[keyi].coefs[keyj];
+					}
+				}
+				for(int keyi = 0; keyi < k; keyi++){
+					for(int row = keyi; row < k*(t-1); row+=k){
+						for(int j = 0; j < N; j++){
+							key_share->key[keyi].coefs[j] += partial_rho[row][j];
+						}
+					}
+				}
+			}
+			else{
+				for(int keyi = 0, row = k*(t-1-i); keyi < k; keyi++, row++){
+					for(int keyj = 0; keyj < N; keyj++){
+						key_share->key[keyi].coefs[keyj] = partial_rho[row][keyj];
+					}
+				}
+			}
+			shared_key_repo[{parties[i], group_id}] = key_share;
+		}
+	}
+}
+
 /* Given a t-sized list of party-ids compute its rank among total C(p,t) combinations */
 int findGroupId(std::vector<int> parties, int t, int p){
 	int mem = 0;

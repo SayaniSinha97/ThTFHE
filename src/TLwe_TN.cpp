@@ -81,7 +81,7 @@ int main(int argc, char *argv[]){
     __asm__ __volatile__ ("rdtsc" : "=a" (low), "=d" (high));
 	auto clock_start_sharing = (static_cast<uint64_t>(high) << 32) | low;	/*measure time in clock cycles*/
 
-    shareSecret(t, p, key, params);
+    shareSecret2(t, p, key, params);
 
     __asm__ __volatile__ ("rdtsc" : "=a" (low), "=d" (high));
     auto clock_stop_sharing = (static_cast<uint64_t>(high) << 32) | low;
